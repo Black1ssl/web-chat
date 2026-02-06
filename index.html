@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Realtime Chat</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.chat-box {
+  background: #fff;
+  width: 350px;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.1);
+  padding: 15px;
+}
+#messages {
+  height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+input, button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+button {
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="chat-box">
+  <h3>Realtime Chat</h3>
+  <input id="user" placeholder="Nama kamu">
+  <div id="messages"></div>
+  <input id="message" placeholder="Tulis pesan...">
+  <button onclick="send()">Kirim</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const messages = document.getElementById("messages");
+
+socket.on("chat", (data) => {
+  const p = document.createElement("p");
+  p.textContent = `${data.user}: ${data.message}`;
+  messages.appendChild(p);
+  messages.scrollTop = messages.scrollHeight;
+});
+
+function send() {
+  const user = document.getElementById("user").value || "Anonim";
+  const message = document.getElementById("message").value;
+  if (!message) return;
+
+  socket.emit("chat", { user, message });
+  document.getElementById("message").value = "";
+}
+</script>
+
+</body>
+</html>
