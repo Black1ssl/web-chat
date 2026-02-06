@@ -6,24 +6,23 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// WAJIB: serve folder public
 app.use(express.static("public"));
 
+// Socket.io
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  console.log("User connected");
 
-  socket.on("chat", (data) => {
-    io.emit("chat", {
-      user: data.user,
-      message: data.message
-    });
+  socket.on("chat message", (msg) => {
+    io.emit("chat message", msg);
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("User disconnected");
   });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log("Server running on port " + PORT);
 });
